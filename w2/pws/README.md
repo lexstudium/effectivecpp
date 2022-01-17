@@ -204,7 +204,7 @@ std::tr1::shared_ptr<int> spi(new int[1024]);
 
 **예)**
 ```c
-// Mutext 타입의 Mutex 객체를 조작하는 C API를 사용한다고 가정
+// Mutex 타입의 Mutex 객체를 조작하는 C API를 사용한다고 가정
 void lock(Mutex *pm);
 void unlock(Mutex *pm);
 ```
@@ -212,15 +212,15 @@ void unlock(Mutex *pm);
 // 뮤텍스 잠금을 관리하는 클래스를 만든다, RAII 법칙을 따른다
 class Lock {
 public:
-    explicit Lock(Mutext *pm)
-    : mutextPtr(pm) {
-        lock(mutextPtr);
+    explicit Lock(Mutex *pm)
+    : mutexPtr(pm) {
+        lock(mutexPtr);
     }
     ~Lock() {
-        unlock(mutextPtr);
+        unlock(mutexPtr);
     }
 private:
-    Mutext *mutexPtr;
+    Mutex *mutexPtr;
 }
 ```
 
@@ -266,14 +266,11 @@ public:
 ```cpp
 class Lock {
 public:
-    // shared_ptr을 초기화하는데, 가리킬 포인터로 Mutext객체의 
+    // shared_ptr을 초기화하는데, 가리킬 포인터로 Mutex객체의 
     // 포인터를 사용하고 삭제자로 unlock 함수를 사용한다.
-    explicit Lock(Mutext *pm)
-    : mutextPtr(pm, unlock) { 
-        lock(mutextPtr);
-    }
-    ~Lock() {
-        unlock(mutextPtr.get());
+    explicit Lock(Mutex *pm)
+    : mutexPtr(pm, unlock) { 
+        lock(mutexPtr.get());
     }
 private:
     // 원시 포인터 대신에 shared_ptr을 사용한다
